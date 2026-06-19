@@ -9,10 +9,12 @@ export class UsersService {
     private readonly usersRepository: IUsersRepository,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const userExists = this.usersRepository.findByEmail(createUserDto.email);
+  async create(createUserDto: CreateUserDto) {
+    const userExists = await this.usersRepository.findByEmail(
+      createUserDto.email,
+    );
 
-    if (userExists == null) {
+    if (userExists != null) {
       throw new ConflictException('User with this email already exists');
     }
 
