@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,13 @@ async function bootstrap() {
     }),
   );
 
+  app.use(cookieParser());
+
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN?.split(',') ?? '*',
+    credentials: true,
+  });
+
   const configDocs = new DocumentBuilder()
     .setTitle('Mini BaaS API')
     .setDescription('API for Mini BaaS application')
@@ -23,6 +31,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, configDocs);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.SERVER_PORT ?? 3000);
 }
 bootstrap();
